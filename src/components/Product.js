@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import axios from "common/axios";
 import { toast } from "react-toastify";
 import Panel from "components/Panel";
@@ -24,6 +25,11 @@ class Product extends Component {
   };
 
   addCart = async () => {
+    if (!global.auth.isLogin()) {
+      this.props.history.push("/login");
+      toast.info("Please Login First");
+      return;
+    }
     try {
       const { id, name, image, price } = this.props.product;
 
@@ -41,6 +47,7 @@ class Product extends Component {
           image,
           price,
           mount: 1,
+          userId: global.auth.getUser().email,
         };
         await axios.post("/carts", cart);
       }
@@ -48,6 +55,19 @@ class Product extends Component {
       this.props.updateCartNum();
     } catch (error) {
       toast.error("Fail to add to cart");
+    }
+  };
+
+  renderMangerBtn = () => {
+    const user = global.auth.getUser() || {};
+    if (user.type === 1) {
+      return (
+        <div className="p-head has-text-right" onClick={this.toEdit}>
+          <span className="icon edit-btn">
+            <i className="fas fa-sliders-h"></i>
+          </span>
+        </div>
+      );
     }
   };
 
@@ -60,11 +80,7 @@ class Product extends Component {
     return (
       <div className={_pClass[status]}>
         <div className="p-content">
-          <div className="p-head has-text-right" onClick={this.toEdit}>
-            <span className="icon edit-btn">
-              <i className="fas fa-sliders-h"></i>
-            </span>
-          </div>
+          {this.renderMangerBtn()}
           <div className="img-wrapper">
             <div className="out-stock-text">Out Of Stock</div>
             <figure className="image is-4by3">
@@ -90,4 +106,4 @@ class Product extends Component {
   }
 }
 
-export default Product;
+export default withRouter(Product);

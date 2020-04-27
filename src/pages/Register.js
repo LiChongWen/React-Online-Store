@@ -4,17 +4,22 @@ import Layout from "Layout";
 import axios from "common/axios";
 import { toast } from "react-toastify";
 
-export default function Login(props) {
+export default function Register(props) {
   const { register, handleSubmit, errors } = useForm();
 
   const onSubmit = async (data) => {
     //handle login logic
     try {
-      const { email, password } = data;
-      const res = await axios.post(`/auth/login`, { email, password });
+      const { nickname, email, password } = data;
+      const res = await axios.post(`/auth/register`, {
+        nickname,
+        email,
+        password,
+        type: 0,
+      });
       const jwToken = res.data;
       global.auth.setToken(jwToken);
-      toast.success("Login success");
+      toast.success("Register success");
       props.history.push("/");
     } catch (error) {
       toast.error(error.response.data.message);
@@ -26,6 +31,18 @@ export default function Login(props) {
     <Layout>
       <div className="login-wrapper">
         <form className="box login-box" onSubmit={handleSubmit(onSubmit)}>
+          <div className="field">
+            <label className="label">Nickname</label>
+            <div className="control">
+              <input
+                className={`input ${errors.nickname && "is-danger"}`}
+                type="text"
+                placeholder="Nickname"
+                name="nickname"
+                ref={register({ required: true })}
+              />
+            </div>
+          </div>
           <div className="field">
             <label className="label">Email</label>
             <div className="control">
@@ -51,7 +68,7 @@ export default function Login(props) {
             </div>
           </div>
           <div className="control">
-            <button className="button is-fullwidth is-primary">Login</button>
+            <button className="button is-fullwidth is-primary">Submit</button>
           </div>
         </form>
       </div>

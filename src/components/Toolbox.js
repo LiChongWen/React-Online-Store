@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
+import { toast } from "react-toastify";
 
 class Toolbox extends Component {
   state = {
@@ -20,13 +21,18 @@ class Toolbox extends Component {
   };
 
   goCart = () => {
+    if (!global.auth.isLogin()) {
+      this.props.history.push("/login");
+      toast.info("Please Login First");
+      return;
+    }
     this.props.history.push(`/cart`);
   };
 
   render() {
     return (
       <div className="tool-box">
-        <div className="log-text">Store</div>
+        <div className="logo-text">Store</div>
         <div className="search-box">
           <div className="field has-addons">
             <div className="control">

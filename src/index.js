@@ -8,6 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./css/app.scss";
 import "./css/style.scss";
 
+import "common/auth";
+
 ReactDOM.render(
   <div>
     <ToastContainer
